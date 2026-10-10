@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:ticket_app/base/res/styles/app_styles.dart';
+import 'package:ticket_app/base/widgets/app_column_text_layout.dart';
 import 'package:ticket_app/base/widgets/app_layoutbuilder_widget.dart';
+import 'package:ticket_app/base/widgets/big_circle.dart';
 import 'package:ticket_app/base/widgets/big_dot.dart';
+import 'package:ticket_app/base/widgets/text_style_fourth.dart';
+import 'package:ticket_app/base/widgets/text_style_third.dart';
 
 class TicketView extends StatelessWidget {
-  const new({super.key});
+  final Map<String, dynamic> ticket;
+  final bool wholeScreen;
+  const TicketView({super.key, required this.ticket, this.wholeScreen = false});
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +20,11 @@ class TicketView extends StatelessWidget {
       width: size.width * 0.85,
       height: 189,
       child: Container(
-        margin: const EdgeInsets.only(right: 16),
+        margin: EdgeInsets.only(right: wholeScreen ? 0 : 16),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
+            // Vé trên
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -31,14 +39,10 @@ class TicketView extends StatelessWidget {
                   // show departure and destionation with icons first line
                   Row(
                     children: [
-                      Text(
-                        'NYC',
-                        style: AppStyles.headLineStyle3.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
+                      TextStyleThird(text: ticket["from"]["code"]),
                       const Spacer(),
                       const BigDot(),
+                      // Ticket flying icon
                       Expanded(
                         child: Stack(
                           children: [
@@ -62,12 +66,7 @@ class TicketView extends StatelessWidget {
                       ),
                       const BigDot(),
                       const Spacer(),
-                      Text(
-                        'LDN',
-                        style: AppStyles.headLineStyle3.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
+                      TextStyleThird(text: ticket["to"]["code"]),
                     ],
                   ),
 
@@ -78,24 +77,18 @@ class TicketView extends StatelessWidget {
                   // Show departure and destination names with time
                   Row(
                     children: [
-                      Text(
-                        'New-York',
-                        style: AppStyles.headLineStyle3.copyWith(
-                          color: Colors.white,
-                        ),
+                      SizedBox(
+                        width: 100,
+                        child: TextStyleFourth(text: ticket["from"]["name"]),
                       ),
                       const Spacer(),
-                      Text(
-                        '8H 30M',
-                        style: AppStyles.headLineStyle3.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
+                      TextStyleFourth(text: ticket["flying_time"]),
                       const Spacer(),
-                      Text(
-                        'London',
-                        style: AppStyles.headLineStyle3.copyWith(
-                          color: Colors.white,
+                      SizedBox(
+                        width: 100,
+                        child: TextStyleFourth(
+                          text: ticket["to"]["name"],
+                          align: TextAlign.end,
                         ),
                       ),
                     ],
@@ -104,11 +97,28 @@ class TicketView extends StatelessWidget {
               ),
             ),
 
+            // Khoảng cách giữa vé trên và vé dưới
             Container(
-              height: 20,
               color: AppStyles.ticketOrange,
+              child: const Row(
+                children: [
+                  BigCircle(
+                    isRight: false,
+                  ),
+                  Expanded(
+                    child: AppLayoutbuilderWidget(
+                      randomDivider: 16,
+                      width: 6,
+                    ),
+                  ),
+                  BigCircle(
+                    isRight: true,
+                  ),
+                ],
+              ),
             ),
 
+            // Vé dưới
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -122,73 +132,24 @@ class TicketView extends StatelessWidget {
                 children: [
                   // show departure and destionation with icons first line
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'NYC',
-                        style: AppStyles.headLineStyle3.copyWith(
-                          color: Colors.white,
-                        ),
+                      AppColumnTextLayout(
+                        topText: ticket["date"],
+                        bottomText: 'DATE',
+                        alignment: CrossAxisAlignment.start,
                       ),
-                      const Spacer(),
-                      const BigDot(),
-                      Expanded(
-                        child: Stack(
-                          children: [
-                            const SizedBox(
-                              height: 24,
-                              child: AppLayoutbuilderWidget(
-                                randomDivider: 6,
-                              ),
-                            ),
-                            Center(
-                              child: Transform.rotate(
-                                angle: 1.57,
-                                child: const Icon(
-                                  Icons.local_airport_rounded,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const BigDot(),
-                      const Spacer(),
-                      Text(
-                        'LDN',
-                        style: AppStyles.headLineStyle3.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
 
-                  const SizedBox(
-                    height: 3,
-                  ),
+                      AppColumnTextLayout(
+                        topText: ticket["departure_time"],
+                        bottomText: 'Departure time',
+                        alignment: CrossAxisAlignment.center,
+                      ),
 
-                  // Show departure and destination names with time
-                  Row(
-                    children: [
-                      Text(
-                        'New-York',
-                        style: AppStyles.headLineStyle3.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        '8H 30M',
-                        style: AppStyles.headLineStyle3.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        'London',
-                        style: AppStyles.headLineStyle3.copyWith(
-                          color: Colors.white,
-                        ),
+                      AppColumnTextLayout(
+                        topText: ticket["number"].toString(),
+                        bottomText: 'Number',
+                        alignment: CrossAxisAlignment.end,
                       ),
                     ],
                   ),
